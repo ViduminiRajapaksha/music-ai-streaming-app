@@ -354,6 +354,3 @@ MelodyMind uses Gemini and local fallback logic together.
 - Debug logging is disabled by default and controlled through environment flags.
 - Recommendation history stores clean source metadata for explainability.
 
-## License
-
-ISC

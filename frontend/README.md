@@ -87,6 +87,3 @@ Vite proxy is also configured in `vite.config.js` for development.
 | `/profile` | User profile and listening analytics |
 | `/settings` | Change password, delete account |
 
-## License
-
-ISC
