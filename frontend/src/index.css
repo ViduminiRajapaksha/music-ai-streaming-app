@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #a3a3a3 transparent;
+  }
+
+  .dark * {
+    scrollbar-color: #535353 transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #a3a3a3;
+    border-radius: 4px;
+  }
+
+  .dark *::-webkit-scrollbar-thumb {
+    background: #535353;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 dark:bg-spotify-black dark:text-white overflow-x-hidden transition-colors duration-300;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-sm dark:shadow-none;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:scale-[1.02];
+  }
+
+  .btn-primary {
+    @apply bg-spotify-green text-black font-semibold px-6 py-2.5 rounded-full
+           hover:scale-105 hover:bg-[#1ed760] transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent border border-gray-400 dark:border-white/30 text-gray-800 dark:text-white font-semibold px-6 py-2.5
+           rounded-full hover:border-gray-600 dark:hover:border-white hover:scale-105 transition-all duration-200;
+  }
+
+  .input-field {
+    @apply w-full bg-gray-100 dark:bg-spotify-gray border border-gray-200 dark:border-transparent rounded-lg px-4 py-3
+           text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-spotify-light
+           focus:outline-none focus:border-spotify-green/50 dark:focus:border-white/30
+           focus:ring-1 focus:ring-spotify-green/30 dark:focus:ring-white/20 transition-all;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold mb-6 text-gray-900 dark:text-white;
+  }
+
+  .text-muted {
+    @apply text-gray-500 dark:text-spotify-light;
+  }
+
+  .surface {
+    @apply bg-white dark:bg-spotify-dark;
+  }
+
+  .surface-elevated {
+    @apply bg-gray-100 dark:bg-spotify-gray;
+  }
+}
