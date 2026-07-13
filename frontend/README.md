@@ -86,7 +86,3 @@ Vite proxy is also configured in `vite.config.js` for development.
 | `/generate-playlist` | Natural language playlist generation |
 | `/profile` | User profile and listening analytics |
 | `/settings` | Change password, delete account |
-
-## License
-
-ISC
