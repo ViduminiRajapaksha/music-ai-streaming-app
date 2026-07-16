@@ -303,7 +303,4 @@ MelodyMind uses Gemini and local fallback logic together.
 - Rate limiting is enabled for API routes.
 - Debug logging is disabled by default and controlled through environment flags.
 - Recommendation history stores clean source metadata for explainability.
-<<<<<<< HEAD
 
-=======
->>>>>>> eb858103c731443df6b9c41391f34ccde41e573f
