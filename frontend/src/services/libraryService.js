@@ -51,6 +51,7 @@ export const libraryService = {
   uploadSong: async (data) => {
     const form = new FormData();
     Object.entries(data).forEach(([key, value]) => {
+      if (key === "cover") return;
       if (value !== undefined && value !== null && value !== "") form.append(key, value);
     });
     const res = await api.post("/songs/upload", form, multipartHeaders);
@@ -109,6 +110,7 @@ export const libraryService = {
   uploadPodcast: async (data) => {
     const form = new FormData();
     Object.entries(data).forEach(([key, value]) => {
+      if (key === "cover") return;
       if (value !== undefined && value !== null && value !== "") form.append(key, value);
     });
     const res = await api.post("/podcasts/upload", form, multipartHeaders);

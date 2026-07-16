@@ -16,7 +16,7 @@ import toast from "react-hot-toast";
 
 const ArtistDetails = () => {
   const { id } = useParams();
-  const { user, isAuthenticated } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
   const [artist, setArtist] = useState(null);
   const [topTracks, setTopTracks] = useState([]);
   const [albums, setAlbums] = useState([]);
@@ -29,12 +29,14 @@ const ArtistDetails = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        let loadedArtist = null;
         try {
           const [artistData, relatedData] = await Promise.all([
             musicService.getArtist(id),
             musicService.getRelatedArtists(id)
           ]);
-          setArtist(artistData);
+          loadedArtist = artistData;
+          setArtist(loadedArtist);
           setRelatedArtists(relatedData.artists?.slice(0, 6) || []);
 
           const searchResult = await musicService.search(artistData.name, "track", 10);
@@ -43,13 +45,14 @@ const ArtistDetails = () => {
           );
         } catch {
           const artistData = await libraryService.getArtist(decodeURIComponent(id));
-          setArtist({
+          loadedArtist = {
             id: artistData.id,
             name: artistData.name,
             images: artistData.image ? [{ url: artistData.image }] : [],
             followers: { total: 0 },
             genres: []
-          });
+          };
+          setArtist(loadedArtist);
           setTopTracks((artistData.songs || []).map(normalizeLibrarySong).filter(Boolean));
           setAlbums((artistData.albums || []).map(normalizeLibraryAlbum).filter(Boolean));
           setPodcasts((artistData.podcasts || []).map(normalizeLibraryPodcast).filter(Boolean));
@@ -57,10 +60,10 @@ const ArtistDetails = () => {
         }
 
         // Check if following and get followers count
-        if (isAuthenticated && artist) {
+        if (isAuthenticated && loadedArtist) {
           const [following, count] = await Promise.all([
-            followService.checkFollowing(artist.id),
-            followService.getFollowersCount(artist.id)
+            followService.checkFollowing(loadedArtist.id),
+            followService.getFollowersCount(loadedArtist.id)
           ]);
           setIsFollowing(following);
           setFollowersCount(count);
@@ -86,7 +89,7 @@ const ArtistDetails = () => {
         setFollowersCount(prev => Math.max(0, prev - 1));
         toast.success("Unfollowed");
       } else {
-        await followService.follow(artist.id);
+        await followService.follow(artist.id, artist.name);
         setIsFollowing(true);
         setFollowersCount(prev => prev + 1);
         toast.success("Following");

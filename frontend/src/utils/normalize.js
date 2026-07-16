@@ -135,6 +135,23 @@ export const normalizeBackendTrack = (song) => ({
 });
 
 /**
+ * Normalize local library artist summary into card/detail format.
+ */
+export const normalizeLibraryArtist = (artist) => {
+  if (!artist) return null;
+
+  return {
+    id: artist.id || encodeURIComponent(artist.name || ""),
+    name: artist.name,
+    image: artist.image || artist.coverImage || PLACEHOLDER_IMAGE,
+    songs: artist.songs || 0,
+    albums: artist.albums || 0,
+    podcasts: artist.podcasts || 0,
+    plays: artist.plays || 0
+  };
+};
+
+/**
  * Normalize YouTube artist object.
  */
 export const normalizeYouTubeArtist = (artist) => ({

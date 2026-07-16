@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { libraryService } from "../services/libraryService";
 import { musicService } from "../services/musicService";
 import {
+  normalizeLibraryArtist,
   normalizeLibraryAlbum,
   normalizeLibraryPodcast,
   normalizeLibrarySong,
@@ -37,7 +38,6 @@ const Search = () => {
   const [mood, setMood] = useState(searchParams.get("mood") || "");
   const [activeTab, setActiveTab] = useState("songs");
   const [results, setResults] = useState(null);
-  const [artists, setArtists] = useState([]);
   const [loading, setLoading] = useState(false);
   const didSearchFromParams = useRef(false);
 
@@ -79,15 +79,13 @@ const Search = () => {
           ...(youtubeData.albums?.items || []).map(normalizeYouTubeAlbum).filter(Boolean)
         ],
         artists: [
-          ...(libraryData.artists || []).map(normalizeLibraryAlbum).filter(Boolean),
+          ...(libraryData.artists || []).map(normalizeLibraryArtist).filter(Boolean),
           ...(youtubeData.artists?.items || []).map(normalizeYouTubeArtist).filter(Boolean)
         ],
         podcasts: (libraryData.podcasts || []).map(normalizeLibraryPodcast).filter(Boolean)
       };
 
-      const artistData = await libraryService.getArtists();
       setResults(combinedResults);
-      setArtists(artistData);
 
       const nextParams = {};
       if (q.trim()) nextParams.q = q.trim();
@@ -127,10 +125,7 @@ const Search = () => {
   const songs = (results?.songs || []).map(normalizeLibrarySong).filter(Boolean);
   const albums = (results?.albums || []).map(normalizeLibraryAlbum).filter(Boolean);
   const podcasts = (results?.podcasts || []).map(normalizeLibraryPodcast).filter(Boolean);
-  const filteredArtists = artists.filter((artist) => {
-    const q = query.trim().toLowerCase();
-    return !q || artist.name.toLowerCase().includes(q);
-  });
+  const artists = results?.artists || [];
 
   return (
     <div className="space-y-6">
@@ -201,9 +196,9 @@ const Search = () => {
       )}
 
       {!loading && results && activeTab === "artists" && (
-        filteredArtists.length > 0 ? (
+        artists.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {filteredArtists.map((artist, i) => (
+            {artists.map((artist, i) => (
               <ArtistCard key={artist.id} artist={artist} index={i} />
             ))}
           </div>

@@ -61,6 +61,7 @@ const saveChatMessages = async (userId, sessionId, userMessage, assistantMessage
 };
 
 const escapeRegex = (value = "") => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const MUSIC_GENRES = ["Pop", "Rock", "Jazz", "Classical", "Hip-Hop", "EDM", "Sinhala", "Tamil", "English", "Instrumental"];
 
 const moodProfiles = {
     stressed: {
@@ -140,6 +141,17 @@ const inferMood = (text = "") => {
     };
 };
 
+const getExplicitMoodProfile = (text = "") => {
+    const lower = text.toLowerCase();
+    const key = Object.keys(moodProfiles).find((item) => lower.includes(item));
+    return key ? moodProfiles[key] : null;
+};
+
+const getRequestedGenre = (text = "") => {
+    const lower = text.toLowerCase();
+    return MUSIC_GENRES.find((item) => lower.includes(item.toLowerCase())) || "";
+};
+
 const safeGemini = async (operation, fallback) => {
     try {
         return await operation();
@@ -197,8 +209,7 @@ const parseSmartQuery = (query = "") => {
     const lower = query.toLowerCase();
     const yearMatch = lower.match(/\b(19|20)\d{2}\b/);
     const profile = inferMood(lower);
-    const genre = ["Pop", "Rock", "Jazz", "Classical", "Hip-Hop", "EDM", "Sinhala", "Tamil", "English", "Instrumental"]
-        .find((item) => lower.includes(item.toLowerCase()));
+    const genre = getRequestedGenre(lower);
 
     return {
         originalQuery: query,
@@ -323,11 +334,14 @@ const storeScoredRecommendations = async (userId, songs, userContext, request, s
 const buildLocalAssistantAnswer = async (userId, message) => {
     const userContext = await buildUserContext(userId);
     const parsed = parseSmartQuery(message);
-    const profile = inferMood(message);
+    const requestedGenre = parsed.genre || getRequestedGenre(message);
+    const explicitMoodProfile = getExplicitMoodProfile(message);
+    const profile = explicitMoodProfile || inferMood(message);
+    const searchQuery = requestedGenre && !explicitMoodProfile ? "" : message;
     const songs = await findLocalSongs({
-        query: message,
+        query: searchQuery,
         genre: parsed.genre,
-        mood: parsed.mood,
+        mood: explicitMoodProfile ? parsed.mood : "",
         lyricFragment: parsed.lyricFragment,
         year: parsed.year,
         limit: 5
@@ -337,7 +351,7 @@ const buildLocalAssistantAnswer = async (userId, message) => {
     const albums = await Album.find({
         $or: [
             { artist: { $in: artists } },
-            { genre: { $in: profile.genres || [] } }
+            ...(requestedGenre ? [{ genre: requestedGenre }] : [{ genre: { $in: profile.genres || [] } }])
         ]
     }).limit(5);
 
@@ -359,6 +373,28 @@ const buildLocalAssistantAnswer = async (userId, message) => {
             "",
             "In this app, try searching terms like `modern pop songs`, `Gen Z playlist`, `trending Sinhala songs`, `viral songs`, or an artist name you like."
         ].join("\n");
+    }
+
+    if (requestedGenre && !songs.length) {
+        return [
+            `I looked for ${requestedGenre} songs in your local library, but there are no matching songs yet.`,
+            "",
+            `To get useful ${requestedGenre} suggestions here, upload songs with Genre set to ${requestedGenre}.`,
+            "You can also try a broader search like `suggest local songs` if you want recommendations from everything currently uploaded."
+        ].join("\n");
+    }
+
+    if (requestedGenre) {
+        const lines = [
+            `Here are ${requestedGenre} songs from your local library:`,
+            "",
+            ...scored.map((item, index) => `${index + 1}. ${item.song.title} - ${item.song.artist} (${item.score}/100)`),
+            "",
+            artists.length ? `Artists to try: ${artists.join(", ")}` : "",
+            albums.length ? `Albums to try: ${albums.map((album) => album.title).join(", ")}` : ""
+        ].filter((line) => line !== "");
+
+        return lines.join("\n");
     }
 
     const lines = [

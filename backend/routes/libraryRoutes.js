@@ -9,6 +9,50 @@ const Song = require("../models/Song");
 const GENRES = ["Pop", "Rock", "Jazz", "Classical", "Hip-Hop", "EDM", "Sinhala", "Tamil", "English", "Instrumental"];
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+const summarizeArtists = ({ songs = [], albums = [], podcasts = [] }) => {
+  const artistMap = new Map();
+
+  const ensureArtist = (name) => {
+    if (!name) return null;
+    const current = artistMap.get(name) || {
+      id: encodeURIComponent(name),
+      name,
+      songs: 0,
+      albums: 0,
+      podcasts: 0,
+      plays: 0,
+      image: ""
+    };
+    artistMap.set(name, current);
+    return current;
+  };
+
+  songs.forEach((song) => {
+    const artist = ensureArtist(song.artist);
+    if (!artist) return;
+    artist.songs += 1;
+    artist.plays += song.plays || 0;
+    artist.image = artist.image || song.coverImage || "";
+  });
+
+  albums.forEach((album) => {
+    const artist = ensureArtist(album.artist);
+    if (!artist) return;
+    artist.albums += 1;
+    artist.image = artist.image || album.cover || "";
+  });
+
+  podcasts.forEach((podcast) => {
+    const artist = ensureArtist(podcast.artist);
+    if (!artist) return;
+    artist.podcasts += 1;
+    artist.plays += podcast.plays || 0;
+    artist.image = artist.image || podcast.coverImage || "";
+  });
+
+  return [...artistMap.values()].sort((a, b) => b.plays - a.plays || a.name.localeCompare(b.name));
+};
+
 const buildSongFilter = ({ query, genre, mood, artist, album }) => {
   const filter = {};
 
@@ -167,11 +211,13 @@ router.get("/search", asyncHandler(async (req, res) => {
     Album.find(albumFilter).sort({ createdAt: -1 }).limit(50),
     Podcast.find(podcastFilter).sort({ plays: -1, createdAt: -1 }).limit(50)
   ]);
+  const artists = summarizeArtists({ songs, albums, podcasts }).slice(0, 12);
 
   res.json({
     success: true,
     songs,
     albums,
+    artists,
     podcasts
   });
 }));

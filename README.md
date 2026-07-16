@@ -75,27 +75,6 @@ flowchart LR
 - Google Gemini API
 - YouTube Data API v3
 
-## Screenshots
-
-Add your final screenshots in `docs/screenshots/` before submitting the project.
-
-Recommended screenshots for a CV or GitHub README:
-
-| Screen | What to Show |
-| --- | --- |
-| Home | New releases, recommendations, search bar, and dark UI |
-| Search | Local library plus YouTube search results |
-| Smart Search | Natural-language search by mood, genre, artist, album, year, or lyrics |
-| AI Playlist | Generated playlist with Local library and YouTube API labels |
-| Recommendation History | Previous AI recommendations and saved source metadata |
-| Artist Studio | Upload form for songs, albums, and podcasts |
-| Admin Dashboard | User/content analytics and moderation |
-
-Example image syntax after adding screenshots:
-
-```md
-![Smart Search](docs/screenshots/smart-search.png)
-```
 
 ## Demo Credentials
 
@@ -144,35 +123,6 @@ Copy the backend example file:
 cd backend
 cp .env.example .env
 ```
-
-Set your values in `backend/.env`:
-
-```env
-PORT=5000
-NODE_ENV=development
-MONGO_URI=mongodb://localhost:27017/music-ai-streaming
-JWT_SECRET=change_this_secret
-JWT_EXPIRES_IN=7d
-
-YOUTUBE_API_KEY=your_youtube_api_key
-
-GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-2.0-flash
-
-CORS_ORIGIN=http://localhost:5173
-CLIENT_URL=http://localhost:5173
-
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-
-DEBUG_REQUESTS=false
-DEBUG_SOCKET=false
-DEBUG_YOUTUBE=false
-DEBUG_GEMINI=false
-DEBUG_ERRORS=false
-```
-
-Keep debug logs off for demos. Turn on `DEBUG_YOUTUBE=true` or `DEBUG_GEMINI=true` only while diagnosing API problems.
 
 ### 3. Start the Backend
 
@@ -353,4 +303,7 @@ MelodyMind uses Gemini and local fallback logic together.
 - Rate limiting is enabled for API routes.
 - Debug logging is disabled by default and controlled through environment flags.
 - Recommendation history stores clean source metadata for explainability.
+<<<<<<< HEAD
 
+=======
+>>>>>>> eb858103c731443df6b9c41391f34ccde41e573f
