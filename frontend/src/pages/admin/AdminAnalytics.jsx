@@ -3,10 +3,11 @@ import { motion } from "framer-motion";
 import { FiBarChart2 } from "react-icons/fi";
 import { adminService } from "../../services/adminService";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import PageHero from "../../components/PageHero";
 import toast from "react-hot-toast";
 
 const ListBlock = ({ title, items, render }) => (
-  <section className="bg-spotify-dark/50 rounded-xl p-5">
+  <section className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
     <h2 className="font-bold mb-4">{title}</h2>
     <div className="space-y-3">
       {items?.length ? items.map(render) : <p className="text-sm text-spotify-light">No data yet.</p>}
@@ -37,21 +38,24 @@ const AdminAnalytics = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold flex items-center gap-3"><FiBarChart2 className="text-spotify-green" /> Analytics</h1>
-        <p className="text-spotify-light mt-1">Top songs, artists, revenue, downloads, listening time, AI usage, moods, and genres.</p>
-      </div>
+      <PageHero
+        eyebrow="Admin Insights"
+        title="Analytics"
+        description="Top songs, artists, revenue, downloads, listening time, AI usage, moods, and genres."
+        stat={`${data?.listeningTime?.events || 0} listening events`}
+        icon={FiBarChart2}
+      />
 
       <div className="grid sm:grid-cols-3 gap-4">
-        <div className="bg-spotify-dark/50 rounded-xl p-5">
+        <div className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
           <p className="text-sm text-spotify-light">Listening Time</p>
           <p className="text-3xl font-bold mt-2">{listeningHours}h</p>
         </div>
-        <div className="bg-spotify-dark/50 rounded-xl p-5">
+        <div className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
           <p className="text-sm text-spotify-light">Premium Revenue</p>
           <p className="text-3xl font-bold mt-2">${data?.revenue?.monthlyRecurringRevenue || 0}</p>
         </div>
-        <div className="bg-spotify-dark/50 rounded-xl p-5">
+        <div className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
           <p className="text-sm text-spotify-light">Listening Events</p>
           <p className="text-3xl font-bold mt-2">{data?.listeningTime?.events || 0}</p>
         </div>

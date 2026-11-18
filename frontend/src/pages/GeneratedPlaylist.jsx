@@ -9,6 +9,7 @@ import { usePlayer } from "../hooks/usePlayer";
 import RecommendationCard from "../components/RecommendationCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import EmptyState from "../components/EmptyState";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
 
 const EXAMPLE_PROMPTS = [
@@ -39,7 +40,7 @@ const GeneratedPlaylist = () => {
       const data = await aiService.generatePlaylist({ prompt: query });
       setResult(data);
     } catch (err) {
-      toast.error(err.message || "Could not generate playlist. Check Gemini/YouTube API availability.");
+      toast.error(err.message || "Could not generate playlist. Check AI discovery services.");
     } finally {
       setLoading(false);
     }
@@ -87,7 +88,7 @@ const GeneratedPlaylist = () => {
     ...externalTracks.map((track, index) => ({
       track,
       reason: result?.playlist?.aiSuggestions?.[index]?.reason || result?.playlist?.description,
-      sourceLabel: "YouTube API",
+      sourceLabel: "External discovery",
       sourceType: "youtube"
     }))
   ];
@@ -95,14 +96,15 @@ const GeneratedPlaylist = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
-          <FiZap className="text-spotify-green" /> AI Playlist Generator
-        </h1>
-        <p className="text-spotify-light">Describe the playlist you want in natural language</p>
-      </div>
+      <PageHero
+        eyebrow="Playlist Builder"
+        title="AI Playlist Generator"
+        description="Describe a mood, moment, language, or activity and turn it into a playable mix."
+        stat={result ? `${tracks.length} tracks generated` : "Natural language playlist creation"}
+        icon={FiZap}
+      />
 
-      <div className="glass rounded-2xl p-6 space-y-4">
+      <div className="rounded-lg bg-white/[0.06] p-6 space-y-4 ring-1 ring-white/10">
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
@@ -140,7 +142,7 @@ const GeneratedPlaylist = () => {
 
       {result && !loading && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-          <div className="glass rounded-2xl p-8 bg-gradient-to-br from-spotify-green/10 to-purple-900/10">
+          <div className="rounded-lg bg-gradient-to-br from-spotify-green/15 via-white/[0.06] to-white/[0.03] p-8 ring-1 ring-white/10">
             <p className="text-spotify-light text-sm uppercase mb-1">AI Generated</p>
             <h2 className="text-3xl font-extrabold mb-2">{result.playlist.name}</h2>
             <p className="text-spotify-light mb-4">{result.playlist.description}</p>
@@ -157,7 +159,7 @@ const GeneratedPlaylist = () => {
                   ? "bg-blue-500/20 text-blue-200"
                   : "bg-red-500/20 text-red-200"
               }`}>
-                {result.sources?.recommendations === "youtube" ? "Tracks from YouTube API" : "YouTube temporarily unavailable"}
+                {result.sources?.recommendations === "youtube" ? "External discovery picks" : "External discovery temporarily unavailable"}
               </span>
               {result.playlist.genres?.map((g) => (
                 <span key={g} className="px-3 py-1 bg-spotify-green/20 text-spotify-green rounded-full text-sm capitalize">

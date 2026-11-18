@@ -3,7 +3,9 @@ import { motion } from "framer-motion";
 import { aiService } from "../services/aiService";
 import { userService } from "../services/userService";
 import ChatBox from "../components/ChatBox";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
+import { FiMessageCircle, FiPlus } from "react-icons/fi";
 
 const AIChat = () => {
   const [messages, setMessages] = useState([]);
@@ -53,19 +55,21 @@ const AIChat = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="h-[calc(100vh-12rem)] flex flex-col"
+      className="flex h-[calc(100vh-10rem)] flex-col gap-6"
     >
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-3xl font-bold">AI Music Chat</h1>
-          <p className="text-spotify-light">Ask anything about music</p>
-        </div>
-        <button onClick={handleNewChat} className="btn-secondary text-sm !py-2 !px-4">
-          New Chat
-        </button>
-      </div>
+      <PageHero
+        eyebrow="AI Assistant"
+        title="AI Music Chat"
+        description="Ask for listening ideas, local library picks, lyrics help, or playlist direction."
+        icon={FiMessageCircle}
+        action={(
+          <button onClick={handleNewChat} className="btn-secondary flex items-center gap-2 text-sm !px-4 !py-2">
+            <FiPlus /> New Chat
+          </button>
+        )}
+      />
 
-      <div className="flex-1 glass rounded-2xl overflow-hidden">
+      <div className="flex min-h-0 flex-1 overflow-hidden rounded-lg bg-white/[0.06] ring-1 ring-white/10">
         <ChatBox
           messages={messages}
           onSend={handleSend}

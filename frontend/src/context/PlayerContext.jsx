@@ -96,7 +96,7 @@ export const PlayerProvider = ({ children }) => {
       events: {
         'onReady': () => {
           if (playerRef.current) {
-            playerRef.current.setVolume(volume * 100);
+            playerRef.current.setVolume(70);
           }
         },
         'onStateChange': (event) => {
@@ -327,7 +327,7 @@ export const PlayerProvider = ({ children }) => {
 
     setQueueIndex(prevIndex);
     playTrack(queue[prevIndex], queue);
-  }, [queue, queueIndex, shuffle, repeat, playTrack]);
+  }, [currentTrack, queue, queueIndex, shuffle, repeat, playTrack]);
 
   const seek = useCallback((time) => {
     if (currentTrack?.audioURL && audioRef.current) {

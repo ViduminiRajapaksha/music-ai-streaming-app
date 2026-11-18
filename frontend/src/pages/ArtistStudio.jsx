@@ -4,6 +4,7 @@ import { FiDisc, FiMic, FiMusic, FiUploadCloud } from "react-icons/fi";
 import { libraryService } from "../services/libraryService";
 import { useAuth } from "../hooks/useAuth";
 import { GENRES } from "../utils/constants";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
 
 const MOODS = ["", "Happy", "Sad", "Energetic", "Calm", "Romantic", "Focus", "Party", "Chill"];
@@ -142,10 +143,13 @@ const ArtistStudio = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">Artist Studio</h1>
-        <p className="text-spotify-light mt-1">Upload songs, albums, podcasts, covers, and lyrics.</p>
-      </div>
+      <PageHero
+        eyebrow="Creator Tools"
+        title="Artist Studio"
+        description="Upload songs, create albums, publish podcasts, and manage cover art from one studio."
+        stat={canUpload ? `${songs.length} songs available for albums` : "Artist or admin access required"}
+        icon={FiUploadCloud}
+      />
 
       {!canUpload && (
         <div className="rounded-xl bg-yellow-500/10 border border-yellow-500/30 p-4 text-yellow-100">
@@ -154,7 +158,7 @@ const ArtistStudio = () => {
       )}
 
       <div className="grid xl:grid-cols-3 gap-6">
-        <form onSubmit={submitSong} className="bg-spotify-dark/50 rounded-xl p-5 space-y-4">
+        <form onSubmit={submitSong} className="rounded-lg bg-white/[0.06] p-5 space-y-4 ring-1 ring-white/10">
           <div className="flex items-center gap-3">
             <FiMusic className="text-spotify-green" />
             <h2 className="text-xl font-bold">Upload Song</h2>
@@ -179,7 +183,7 @@ const ArtistStudio = () => {
           </button>
         </form>
 
-        <form onSubmit={submitAlbum} className="bg-spotify-dark/50 rounded-xl p-5 space-y-4">
+        <form onSubmit={submitAlbum} className="rounded-lg bg-white/[0.06] p-5 space-y-4 ring-1 ring-white/10">
           <div className="flex items-center gap-3">
             <FiDisc className="text-spotify-green" />
             <h2 className="text-xl font-bold">Create Album</h2>
@@ -206,7 +210,7 @@ const ArtistStudio = () => {
           </button>
         </form>
 
-        <form onSubmit={submitPodcast} className="bg-spotify-dark/50 rounded-xl p-5 space-y-4">
+        <form onSubmit={submitPodcast} className="rounded-lg bg-white/[0.06] p-5 space-y-4 ring-1 ring-white/10">
           <div className="flex items-center gap-3">
             <FiMic className="text-spotify-green" />
             <h2 className="text-xl font-bold">Upload Podcast</h2>

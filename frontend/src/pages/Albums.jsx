@@ -5,6 +5,7 @@ import { libraryService } from "../services/libraryService";
 import { normalizeLibraryAlbum } from "../utils/normalize";
 import AlbumCard from "../components/AlbumCard";
 import EmptyState from "../components/EmptyState";
+import PageHero from "../components/PageHero";
 import { SkeletonGrid } from "../components/LoadingSpinner";
 import { GENRES } from "../utils/constants";
 import toast from "react-hot-toast";
@@ -31,16 +32,19 @@ const Albums = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Albums</h1>
-          <p className="text-spotify-light mt-1">Browse artist albums by release and genre.</p>
-        </div>
+      <PageHero
+        eyebrow="Browse"
+        title="Albums"
+        description="Browse artist albums by release, genre, and mood."
+        stat={`${albums.length} ${albums.length === 1 ? "album" : "albums"}`}
+        icon={FiDisc}
+        action={
         <select value={genre} onChange={(e) => setGenre(e.target.value)} className="input-field md:w-56">
           <option value="">All genres</option>
           {GENRES.map((item) => <option key={item} value={item}>{item}</option>)}
         </select>
-      </div>
+        }
+      />
 
       {loading ? (
         <SkeletonGrid count={8} />

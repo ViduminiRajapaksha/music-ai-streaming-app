@@ -4,11 +4,12 @@ import { FiClock, FiStar, FiTrash2 } from "react-icons/fi";
 import { userService } from "../services/userService";
 import EmptyState from "../components/EmptyState";
 import LoadingSpinner from "../components/LoadingSpinner";
+import PageHero from "../components/PageHero";
 import { formatDateTime } from "../utils/formatDate";
 import toast from "react-hot-toast";
 
 const sourceLabel = (source) => {
-  if (source === "youtube-api") return "YouTube API";
+  if (source === "youtube-api") return "External discovery";
   if (source === "local-library") return "Local library";
   if (source === "user-listening-history") return "User listening history";
   return source || "Recommendation";
@@ -20,6 +21,8 @@ const sourceClass = (source) => {
   if (source === "user-listening-history") return "bg-amber-500/20 text-amber-200";
   return "bg-white/10 text-spotify-light";
 };
+
+const showSourceBadge = (source) => source && source !== "youtube-api";
 
 const moodSourceLabel = (source) => (
   source === "gemini" ? "Gemini mood analysis" : "Fallback mood profile"
@@ -63,12 +66,13 @@ const RecommendationHistory = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold flex items-center gap-3">
-          <FiClock className="text-spotify-green" /> Recommendation History
-        </h1>
-        <p className="text-spotify-light mt-1">Previous AI recommendations with their data sources.</p>
-      </div>
+      <PageHero
+        eyebrow="Listening Intelligence"
+        title="Recommendation History"
+        description="Previous AI recommendation sessions saved with their reasons and library signals."
+        stat={`${history.length} saved sessions`}
+        icon={FiClock}
+      />
 
       {history.length ? (
         <div className="space-y-4">
@@ -117,9 +121,11 @@ const RecommendationHistory = () => {
                         <p className="text-sm text-spotify-light truncate">{item.artist || "Unknown Artist"}</p>
                         {item.reason && <p className="text-xs text-spotify-green/80 mt-1 line-clamp-2">{item.reason}</p>}
                       </div>
-                      <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-medium ${sourceClass(item.source)}`}>
-                        {sourceLabel(item.source)}
-                      </span>
+                      {showSourceBadge(item.source) && (
+                        <span className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-medium ${sourceClass(item.source)}`}>
+                          {sourceLabel(item.source)}
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>

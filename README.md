@@ -2,6 +2,21 @@
 
 MelodyMind is a full-stack music streaming and discovery platform built for an educational portfolio project. It combines a React frontend, Express API, MongoDB data models, YouTube Data API music discovery, and Google Gemini-powered AI features such as smart search, AI chat, personalized recommendations, and playlist generation.
 
+## Project Status
+
+This project is prepared as a portfolio/CV demo application. It includes role-based user flows, AI-assisted discovery, local media uploads, admin moderation, real-time events, and documented setup instructions.
+
+Quality checks:
+
+```bash
+cd backend
+npm test
+
+cd ../frontend
+npm run lint
+npm run build
+```
+
 ## Features
 
 - Listener, artist, and admin authentication with JWT.
@@ -74,24 +89,6 @@ flowchart LR
 
 - Google Gemini API
 - YouTube Data API v3
-
-
-## Demo Credentials
-
-Use these accounts for local demos after running the seed command.
-
-| Role | Email | Password |
-| --- | --- | --- |
-| Listener | `listener@melodymind.demo` | `Listener123` |
-| Artist | `artist@melodymind.demo` | `Artist123` |
-| Admin | `admin@melodymind.demo` | `Admin123` |
-
-Seed the accounts:
-
-```bash
-cd backend
-npm run seed:demo
-```
 
 ## Setup Instructions
 
@@ -194,14 +191,18 @@ http://localhost:5000/api
 - `GET /library/artists` - Get local artists.
 - `GET /library/artists/:name` - Get local artist details.
 - `GET /songs` - List local songs.
-- `POST /songs` - Upload a song.
+- `POST /songs/upload` - Upload a song.
 - `POST /songs/:id/cover` - Upload song cover.
+- `PUT /songs/:id/lyrics` - Update song lyrics.
+- `POST /songs/:id/play` - Increment play count.
+- `GET /songs/:id/download` - Download a premium song and save its download record.
 - `GET /albums` - List local albums.
 - `POST /albums` - Create local album.
 - `POST /albums/:id/cover` - Upload album cover.
 - `POST /albums/:id/songs` - Add song to album.
 - `GET /podcasts` - List podcasts.
-- `POST /podcasts` - Upload podcast.
+- `POST /podcasts/upload` - Upload podcast.
+- `POST /podcasts/:id/cover` - Upload podcast cover.
 
 ### AI
 
@@ -232,14 +233,17 @@ http://localhost:5000/api
 - `GET /playlists/:id` - Get playlist details.
 - `PUT /playlists/:id` - Update playlist.
 - `DELETE /playlists/:id` - Delete playlist.
-- `POST /playlists/:id/songs` - Add song to playlist.
-- `DELETE /playlists/:id/songs/:songId` - Remove song from playlist.
+- `POST /playlists/:id/add-song` - Add song to playlist.
+- `DELETE /playlists/:id/remove-song/:songId` - Remove song from playlist.
+- `POST /playlists/:id/share` - Generate playlist sharing data.
+- `GET /playlists/shared/:shareCode` - Open a shared playlist.
+- `POST /playlists/:id/collaborators` - Add a playlist collaborator.
+- `DELETE /playlists/:id/collaborators/:userId` - Remove a collaborator.
 - `GET /favorites` - Get favorites.
 - `POST /favorites` - Add favorite.
 - `DELETE /favorites/:id` - Remove favorite.
 - `GET /downloads` - Get downloads.
-- `POST /downloads` - Save download record.
-- `DELETE /downloads/:id` - Remove download.
+- `DELETE /downloads/:songId` - Remove download.
 - `POST /follow/:userId` - Follow an artist.
 - `DELETE /follow/:userId` - Unfollow an artist.
 
@@ -300,6 +304,7 @@ MelodyMind uses Gemini and local fallback logic together.
 
 - Request validation is handled with custom validators and middleware.
 - Central error handling returns consistent JSON error responses.
+- Profile updates are scoped to user-owned fields; subscription changes are managed through admin controls.
 - Rate limiting is enabled for API routes.
 - Debug logging is disabled by default and controlled through environment flags.
 - Recommendation history stores clean source metadata for explainability.

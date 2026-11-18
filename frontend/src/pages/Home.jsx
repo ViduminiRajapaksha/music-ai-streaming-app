@@ -1,16 +1,55 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiZap, FiMessageCircle } from "react-icons/fi";
+import { FiClock, FiCompass, FiMessageCircle, FiPlay, FiRadio, FiTrendingUp, FiZap } from "react-icons/fi";
 import { useMusic } from "../hooks/useMusic";
 import { normalizeYouTubeTrack } from "../utils/normalize";
 import MusicCard from "../components/MusicCard";
 import AlbumCard from "../components/AlbumCard";
+import ArtistCard from "../components/ArtistCard";
 import SearchBar from "../components/SearchBar";
-import LoadingSpinner, { SkeletonGrid } from "../components/LoadingSpinner";
+import { SkeletonGrid } from "../components/LoadingSpinner";
 import EmptyState from "../components/EmptyState";
-import { musicService } from "../services/musicService";
 import { libraryService } from "../services/libraryService";
+import homeMusicHero from "../assets/images/home-music-hero.png";
+
+const SectionHeader = ({ title, subtitle, actionTo, actionLabel = "See all" }) => (
+  <div className="mb-4 flex items-end justify-between gap-4">
+    <div>
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h2>
+      {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
+    </div>
+    {actionTo && (
+      <Link to={actionTo} className="shrink-0 text-sm font-semibold text-spotify-green hover:underline">
+        {actionLabel}
+      </Link>
+    )}
+  </div>
+);
+
+const HorizontalShelf = ({ children }) => (
+  <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 md:-mx-8 md:px-8">
+    {children}
+  </div>
+);
+
+const ShelfItem = ({ children, wide = false }) => (
+  <div className={`${wide ? "w-[220px]" : "w-[170px]"} shrink-0 sm:w-[190px]`}>
+    {children}
+  </div>
+);
+
+const QuickTile = ({ to, icon: Icon, label, tone }) => (
+  <Link
+    to={to}
+    className={`group flex min-h-20 items-center gap-3 rounded-lg border border-white/10 px-4 py-3 transition-all hover:-translate-y-0.5 hover:border-white/20 ${tone}`}
+  >
+    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/30 text-white">
+      <Icon className="h-5 w-5" />
+    </span>
+    <span className="font-semibold text-white">{label}</span>
+  </Link>
+);
 
 const Home = () => {
   const {
@@ -48,7 +87,7 @@ const Home = () => {
       ]);
       setAlbums(albumsData.albums || []);
       setArtists(artistsData);
-    } catch (err) {
+    } catch {
       // Browse data is non-critical; keep the home page usable if it fails.
     } finally {
       setBrowseLoading(false);
@@ -60,61 +99,82 @@ const Home = () => {
   const recentQueue = recentlyPlayed;
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-9">
       {/* Hero */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-2xl overflow-hidden glass p-8 md:p-12"
+        className="relative min-h-[330px] overflow-hidden rounded-lg p-6 shadow-2xl shadow-black/20 md:p-10"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-spotify-green/20 via-transparent to-purple-900/20" />
-        <div className="relative z-10">
-          <h1 className="text-3xl md:text-5xl font-extrabold mb-4">
-            Discover Music with <span className="text-spotify-green">AI</span>
+        <img
+          src={homeMusicHero}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/68 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+        <div className="relative z-10 flex min-h-[282px] max-w-2xl flex-col justify-center">
+          <div className="mb-4 flex w-fit items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-spotify-green">
+            <FiRadio /> AI powered listening
+          </div>
+          <h1 className="mb-4 text-4xl font-black leading-tight text-white md:text-6xl">
+            Your music, tuned for the moment.
           </h1>
-          <p className="text-spotify-light text-lg mb-6 max-w-xl">
-            Stream, explore, and get personalized recommendations powered by YouTube and Gemini AI.
+          <p className="mb-6 max-w-xl text-base leading-7 text-gray-200 md:text-lg">
+            Play your library, rediscover recent favorites, and build playlists from songs, moods, artists, and lyrics.
           </p>
-          <div className="max-w-md mb-8">
-            <SearchBar placeholder="What do you want to listen to?" />
+          <div className="mb-7 max-w-lg">
+            <SearchBar placeholder="Search songs, artists, albums..." />
           </div>
           <div className="flex flex-wrap gap-3">
             <Link to="/ai-chat" className="btn-primary flex items-center gap-2">
-              <FiMessageCircle /> AI Chat
+              <FiMessageCircle /> Ask AI
             </Link>
             <Link to="/smart-search" className="btn-secondary flex items-center gap-2">
-              <FiZap /> Smart Search
+              <FiCompass /> Smart Search
             </Link>
-            <Link to="/generate-playlist" className="btn-secondary flex items-center gap-2">
-              <FiZap /> Generate Playlist
+            <Link to="/generate-playlist" className="btn-secondary hidden items-center gap-2 sm:flex">
+              <FiPlay /> Generate Mix
             </Link>
           </div>
         </div>
       </motion.section>
 
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <QuickTile to="/recommendations" icon={FiZap} label="Made For You" tone="bg-gradient-to-br from-spotify-green/30 to-emerald-900/50" />
+        <QuickTile to="/trending" icon={FiTrendingUp} label="Trending Now" tone="bg-gradient-to-br from-cyan-500/25 to-slate-900/60" />
+        <QuickTile to="/history" icon={FiClock} label="Listening History" tone="bg-gradient-to-br from-amber-500/25 to-neutral-900/60" />
+        <QuickTile to="/generate-playlist" icon={FiRadio} label="Create A Mix" tone="bg-gradient-to-br from-rose-500/25 to-zinc-900/60" />
+      </section>
+
       {/* Recently Played */}
       {recentlyPlayed.length > 0 && (
         <section>
-          <h2 className="section-title">Recently Played</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          <SectionHeader title="Recently Played" subtitle="Jump back into what you were listening to." actionTo="/history" />
+          <HorizontalShelf>
             {recentlyPlayed.slice(0, 6).map((track, i) => (
-              <MusicCard key={track.youtubeId} track={track} index={i} queue={recentQueue} />
+              <ShelfItem key={track.youtubeId || track.id}>
+                <MusicCard track={track} index={i} queue={recentQueue} />
+              </ShelfItem>
             ))}
-          </div>
+          </HorizontalShelf>
         </section>
       )}
 
       {/* Recommendations */}
       <section>
-        <h2 className="section-title">Recommended For You</h2>
+        <SectionHeader title="Recommended For You" subtitle="A personal shelf based on your taste and activity." actionTo="/recommendations" />
         {homeLoading ? (
           <SkeletonGrid count={6} />
         ) : recommendedTracks.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          <HorizontalShelf>
             {recommendedTracks.map((track, i) => (
-              <MusicCard key={track.id} track={track} index={i} queue={recommendedTracks} />
+              <ShelfItem key={track.id}>
+                <MusicCard track={track} index={i} queue={recommendedTracks} />
+              </ShelfItem>
             ))}
-          </div>
+          </HorizontalShelf>
         ) : (
           <EmptyState
             icon={FiZap}
@@ -126,107 +186,79 @@ const Home = () => {
 
       {/* New Releases */}
       <section>
-        <h2 className="section-title">New Releases</h2>
+        <SectionHeader title="New Releases" subtitle="Fresh tracks and albums to explore." />
         {homeLoading ? (
           <SkeletonGrid count={6} />
         ) : releaseTracks.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          <HorizontalShelf>
             {releaseTracks.map((track, i) => (
-              <MusicCard key={track.id} track={track} index={i} queue={releaseTracks} />
+              <ShelfItem key={track.id}>
+                <MusicCard track={track} index={i} queue={releaseTracks} />
+              </ShelfItem>
             ))}
-          </div>
+          </HorizontalShelf>
         ) : null}
       </section>
 
       {/* Trending */}
       <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="section-title mb-0">Trending</h2>
-          <Link to="/trending" className="text-spotify-green hover:underline text-sm font-medium">
-            See all
-          </Link>
-        </div>
+        <SectionHeader title="Trending" subtitle="What people are playing right now." actionTo="/trending" />
         {homeLoading ? (
           <SkeletonGrid count={6} />
         ) : releaseTracks.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          <HorizontalShelf>
             {releaseTracks.slice(0, 6).map((track, i) => (
-              <MusicCard key={`trending-${track.id}`} track={track} index={i} queue={releaseTracks} />
+              <ShelfItem key={`trending-${track.id}`}>
+                <MusicCard track={track} index={i} queue={releaseTracks} />
+              </ShelfItem>
             ))}
-          </div>
+          </HorizontalShelf>
         ) : null}
       </section>
 
       {/* Albums */}
       <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="section-title mb-0">Popular Albums</h2>
-          <Link to="/albums" className="text-spotify-green hover:underline text-sm font-medium">
-            See all
-          </Link>
-        </div>
+        <SectionHeader title="Popular Albums" subtitle="Browse full releases from your catalog." actionTo="/albums" />
         {browseLoading ? (
           <SkeletonGrid count={6} />
         ) : albums.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          <HorizontalShelf>
             {albums.map((album, i) => (
-              <AlbumCard key={album._id || album.id} album={album} index={i} />
+              <ShelfItem key={album._id || album.id}>
+                <AlbumCard album={album} index={i} />
+              </ShelfItem>
             ))}
-          </div>
+          </HorizontalShelf>
         ) : null}
       </section>
 
       {/* Artists */}
       <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="section-title mb-0">Popular Artists</h2>
-          <Link to="/artists" className="text-spotify-green hover:underline text-sm font-medium">
-            See all
-          </Link>
-        </div>
+        <SectionHeader title="Popular Artists" subtitle="Follow artists and explore their uploads." actionTo="/artists" />
         {browseLoading ? (
           <SkeletonGrid count={6} />
         ) : artists.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          <HorizontalShelf>
             {artists.map((artist, i) => (
-              <div
-                key={artist.id}
-                className="group cursor-pointer"
-                onClick={() => window.location.href = `/artist/${artist.id}`}
-              >
-                <div className="relative aspect-square rounded-full overflow-hidden mb-3 bg-gray-200 dark:bg-gray-700">
-                  <img
-                    src={artist.image || "https://via.placeholder.com/200"}
-                    alt={artist.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <h3 className="font-semibold text-sm truncate">{artist.name}</h3>
-                <p className="text-xs text-spotify-light">Artist</p>
-              </div>
+              <ShelfItem key={artist.id}>
+                <ArtistCard artist={artist} index={i} />
+              </ShelfItem>
             ))}
-          </div>
+          </HorizontalShelf>
         ) : null}
       </section>
 
       {/* Genres */}
       <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="section-title mb-0">Browse by Genre</h2>
-          <Link to="/genres" className="text-spotify-green hover:underline text-sm font-medium">
-            See all
-          </Link>
-        </div>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+        <SectionHeader title="Browse by Genre" subtitle="Start with a sound and let MelodyMind branch out." actionTo="/genres" />
+        <div className="flex flex-wrap gap-3">
           {genres.slice(0, 12).map((genre) => (
             <Link
               key={genre}
               to={`/search?q=${genre}&type=track`}
-              className="group relative aspect-[4/3] rounded-lg overflow-hidden bg-gradient-to-br from-green-400 to-green-600 hover:from-green-300 hover:to-green-500 transition-all duration-300"
+              className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-semibold text-gray-800 transition-all hover:border-spotify-green/50 hover:bg-spotify-green hover:text-black dark:text-white"
             >
-              <div className="absolute inset-0 flex items-center justify-center p-2">
-                <span className="text-white font-bold text-sm text-center">{genre}</span>
-              </div>
+              {genre}
             </Link>
           ))}
         </div>

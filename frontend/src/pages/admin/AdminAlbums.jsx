@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FiDisc, FiTrash2 } from "react-icons/fi";
 import { adminService } from "../../services/adminService";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { GENRES } from "../../utils/constants";
+import PageHero from "../../components/PageHero";
 import toast from "react-hot-toast";
 
 const AdminAlbums = () => {
@@ -11,7 +12,7 @@ const AdminAlbums = () => {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("");
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const data = await adminService.getAlbums(status ? { status } : {});
@@ -21,11 +22,11 @@ const AdminAlbums = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [status]);
 
   useEffect(() => {
     load();
-  }, [status]);
+  }, [load]);
 
   const updateAlbum = async (id, changes) => {
     try {
@@ -50,21 +51,24 @@ const AdminAlbums = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3"><FiDisc className="text-spotify-green" /> Albums</h1>
-          <p className="text-spotify-light mt-1">Manage album metadata, approval, and featured placement.</p>
-        </div>
-        <select value={status} onChange={(e) => setStatus(e.target.value)} className="input-field md:w-56">
-          <option value="">All statuses</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-        </select>
-      </div>
+      <PageHero
+        eyebrow="Admin Library"
+        title="Albums"
+        description="Manage album metadata, approval, and featured placement."
+        stat={`${albums.length} albums shown`}
+        icon={FiDisc}
+        action={(
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className="input-field md:w-56">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        )}
+      />
 
       {loading ? <LoadingSpinner /> : (
-        <div className="bg-spotify-dark/50 rounded-xl overflow-x-auto">
+        <div className="overflow-x-auto rounded-lg bg-white/[0.06] ring-1 ring-white/10">
           <table className="w-full text-sm">
             <thead className="text-left text-spotify-light">
               <tr><th className="p-3">Album</th><th>Genre</th><th>Status</th><th>Featured</th><th>Songs</th><th>Actions</th></tr>
@@ -74,7 +78,7 @@ const AdminAlbums = () => {
                 <tr key={album._id} className="border-t border-white/5">
                   <td className="p-3">
                     <input value={album.title} onChange={(e) => updateAlbum(album._id, { title: e.target.value })} className="bg-transparent border border-white/10 rounded px-2 py-1 w-full" />
-                    <p className="text-xs text-spotify-light mt-1">{album.artist} · {album.views} views</p>
+                    <p className="text-xs text-spotify-light mt-1">{album.artist} - {album.views} views</p>
                   </td>
                   <td>
                     <select value={album.genre || ""} onChange={(e) => updateAlbum(album._id, { genre: e.target.value })} className="bg-transparent border border-white/10 rounded px-2 py-1">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiPlay, FiEdit2, FiTrash2, FiMusic, FiShare2 } from "react-icons/fi";
@@ -20,7 +20,7 @@ const PlaylistDetails = () => {
   const [newName, setNewName] = useState("");
   const { playQueue } = usePlayer();
 
-  const loadPlaylist = async () => {
+  const loadPlaylist = useCallback(async () => {
     try {
       const data = await playlistService.getById(id);
       setPlaylist(data);
@@ -31,11 +31,11 @@ const PlaylistDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
 
   useEffect(() => {
     loadPlaylist();
-  }, [id]);
+  }, [loadPlaylist]);
 
   const handleRename = async (e) => {
     e.preventDefault();

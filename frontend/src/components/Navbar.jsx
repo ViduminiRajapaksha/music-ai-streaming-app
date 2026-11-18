@@ -16,7 +16,7 @@ const Navbar = ({ onMenuClick }) => {
           <FiMenu className="w-6 h-6" />
         </button>
 
-        <Link to="/" className="flex items-center gap-2 flex-shrink-0">
+        <Link to="/" className="flex items-center gap-2 flex-shrink-0 lg:hidden">
           <div className="w-8 h-8 bg-spotify-green rounded-full flex items-center justify-center">
             <span className="text-black font-bold text-sm">M</span>
           </div>

@@ -5,6 +5,7 @@ import { FiGrid } from "react-icons/fi";
 import { libraryService } from "../services/libraryService";
 import EmptyState from "../components/EmptyState";
 import LoadingSpinner from "../components/LoadingSpinner";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
 
 const genreColors = [
@@ -37,10 +38,13 @@ const Genres = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Genres</h1>
-        <p className="text-spotify-light mt-1">Explore Pop, Rock, Jazz, Classical, Hip-Hop, EDM, Sinhala, Tamil, English, and Instrumental music.</p>
-      </div>
+      <PageHero
+        eyebrow="Explore"
+        title="Genres"
+        description="Explore Pop, Rock, Jazz, Classical, Hip-Hop, EDM, Sinhala, Tamil, English, and Instrumental music."
+        stat={`${genres.length} genres`}
+        icon={FiGrid}
+      />
 
       {genres.length ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

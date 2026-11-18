@@ -5,6 +5,8 @@ import { usePlayer } from "../hooks/usePlayer";
 import { libraryService } from "../services/libraryService";
 import { API_ORIGIN, PLACEHOLDER_IMAGE } from "../utils/constants";
 import { formatSeconds } from "../utils/formatDuration";
+import EmptyState from "../components/EmptyState";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
 
 const NowPlaying = () => {
@@ -39,10 +41,16 @@ const NowPlaying = () => {
 
   if (!currentTrack) {
     return (
-      <div className="text-center py-20">
-        <h1 className="text-3xl font-bold">Now Playing</h1>
-        <p className="text-spotify-light mt-2">Start a song to see the full player.</p>
-      </div>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
+        <PageHero
+          eyebrow="Player"
+          title="Now Playing"
+          description="Your full-screen player appears here when a track starts."
+          stat="Nothing playing right now"
+          icon={FiPlay}
+        />
+        <EmptyState icon={FiPlay} title="Start a song" description="Choose any track from Home, Search, Playlists, or Recommendations." />
+      </motion.div>
     );
   }
 
@@ -50,12 +58,13 @@ const NowPlaying = () => {
   const activeLine = lyricsLines[activeLyricIndex]?.text;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-5xl mx-auto space-y-8">
-      <div className="grid md:grid-cols-[320px_1fr] gap-8 items-end">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mx-auto max-w-6xl space-y-8">
+      <div className="overflow-hidden rounded-lg bg-gradient-to-br from-spotify-green/20 via-white/[0.06] to-transparent p-6 ring-1 ring-white/10 md:p-8">
+        <div className="grid items-end gap-8 md:grid-cols-[320px_1fr]">
         <img
           src={currentTrack.image || PLACEHOLDER_IMAGE}
           alt={currentTrack.title}
-          className="w-full max-w-80 aspect-square rounded-xl object-cover shadow-2xl mx-auto"
+          className="mx-auto aspect-square w-full max-w-80 rounded-lg object-cover shadow-2xl"
         />
         <div className="space-y-5">
           <p className="text-spotify-light text-sm uppercase">Now Playing</p>
@@ -91,9 +100,10 @@ const NowPlaying = () => {
           </div>
         </div>
       </div>
+      </div>
 
       {activeLine && (
-        <div className="glass rounded-xl p-6 text-center">
+        <div className="rounded-lg bg-white/[0.06] p-6 text-center ring-1 ring-white/10">
           <p className="text-2xl font-bold text-spotify-green">{activeLine}</p>
         </div>
       )}

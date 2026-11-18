@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FiTrash2, FiUsers } from "react-icons/fi";
 import { adminService } from "../../services/adminService";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import PageHero from "../../components/PageHero";
 import toast from "react-hot-toast";
 
 const AdminUsers = () => {
@@ -10,7 +11,7 @@ const AdminUsers = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const data = await adminService.getUsers(filter ? { search: filter } : {});
@@ -20,11 +21,11 @@ const AdminUsers = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   const updateUser = async (id, changes) => {
     try {
@@ -49,19 +50,22 @@ const AdminUsers = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3"><FiUsers className="text-spotify-green" /> Users</h1>
-          <p className="text-spotify-light mt-1">View, suspend, promote, and manage premium subscriptions.</p>
-        </div>
-        <form onSubmit={(e) => { e.preventDefault(); load(); }} className="flex gap-2">
-          <input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Search users" className="input-field" />
-          <button className="btn-primary">Search</button>
-        </form>
-      </div>
+      <PageHero
+        eyebrow="Admin Console"
+        title="Users"
+        description="View, suspend, promote, and manage premium subscriptions."
+        stat={`${users.length} users shown`}
+        icon={FiUsers}
+        action={(
+          <form onSubmit={(e) => { e.preventDefault(); load(); }} className="flex gap-2">
+            <input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Search users" className="input-field" />
+            <button className="btn-primary">Search</button>
+          </form>
+        )}
+      />
 
       {loading ? <LoadingSpinner /> : (
-        <div className="bg-spotify-dark/50 rounded-xl overflow-x-auto">
+        <div className="overflow-x-auto rounded-lg bg-white/[0.06] ring-1 ring-white/10">
           <table className="w-full text-sm">
             <thead className="text-left text-spotify-light">
               <tr><th className="p-3">User</th><th>Role</th><th>Status</th><th>Premium</th><th>Actions</th></tr>

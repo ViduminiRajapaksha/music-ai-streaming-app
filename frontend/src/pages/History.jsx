@@ -6,6 +6,7 @@ import { normalizeBackendTrack, normalizeLibrarySong } from "../utils/normalize"
 import EmptyState from "../components/EmptyState";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MusicCard from "../components/MusicCard";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
 
 const normalizeHistoryItem = (item) => {
@@ -60,10 +61,13 @@ const History = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-10">
-      <div>
-        <h1 className="text-3xl font-bold">History</h1>
-        <p className="text-spotify-light mt-1">Recently played, most played, and continue listening.</p>
-      </div>
+      <PageHero
+        eyebrow="Listening"
+        title="History"
+        description="Recently played, most played, and continue listening."
+        stat={`${recent.length} recent - ${mostPlayed.length} most played`}
+        icon={FiClock}
+      />
 
       {hasAny ? (
         <>

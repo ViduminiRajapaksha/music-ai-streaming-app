@@ -4,10 +4,11 @@ import { motion } from "framer-motion";
 import { FiActivity, FiBarChart2, FiDisc, FiDollarSign, FiDownload, FiMusic, FiUsers } from "react-icons/fi";
 import { adminService } from "../../services/adminService";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import PageHero from "../../components/PageHero";
 import toast from "react-hot-toast";
 
 const Stat = ({ label, value, icon: Icon }) => (
-  <div className="bg-spotify-dark/50 rounded-xl p-5">
+  <div className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
     <div className="flex items-center justify-between">
       <p className="text-sm text-spotify-light">{label}</p>
       <Icon className="text-spotify-green" />
@@ -40,13 +41,14 @@ const AdminDashboard = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-spotify-light mt-1">Control users, artists, music, subscriptions, and analytics.</p>
-        </div>
-        <Link to="/admin/reports" className="btn-primary">Open Reports</Link>
-      </div>
+      <PageHero
+        eyebrow="Admin Console"
+        title="Admin Dashboard"
+        description="Control users, artists, music, subscriptions, and analytics."
+        stat={`${stats.songs || 0} songs - ${stats.albums || 0} albums - ${stats.users || 0} users`}
+        icon={FiBarChart2}
+        action={<Link to="/admin/reports" className="btn-primary">Open Reports</Link>}
+      />
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Stat label="Users" value={stats.users || 0} icon={FiUsers} />
@@ -60,7 +62,7 @@ const AdminDashboard = () => {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        <section className="bg-spotify-dark/50 rounded-xl p-5">
+        <section className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
           <h2 className="font-bold mb-4">Moderation Queue</h2>
           <div className="space-y-3 text-sm">
             <p className="flex justify-between"><span>Pending artists</span><b>{stats.pendingArtists || 0}</b></p>
@@ -69,7 +71,7 @@ const AdminDashboard = () => {
           </div>
         </section>
 
-        <section className="bg-spotify-dark/50 rounded-xl p-5">
+        <section className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
           <h2 className="font-bold mb-4">Top Songs</h2>
           <div className="space-y-3">
             {(data?.topSongs || []).map((song) => (
@@ -81,7 +83,7 @@ const AdminDashboard = () => {
           </div>
         </section>
 
-        <section className="bg-spotify-dark/50 rounded-xl p-5">
+        <section className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
           <h2 className="font-bold mb-4">Trending Genres</h2>
           <div className="space-y-3">
             {(data?.trendingGenres || []).map((genre) => (

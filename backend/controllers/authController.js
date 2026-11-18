@@ -91,14 +91,13 @@ exports.getProfile = asyncHandler(async (req, res) => {
  * PUT /api/auth/profile
  */
 exports.updateProfile = asyncHandler(async (req, res) => {
-    const { username, profileImage, favoriteGenres, country, subscription, preferredLanguage } = req.body;
+    const { username, profileImage, favoriteGenres, country, preferredLanguage } = req.body;
 
     const updates = {};
     if (username !== undefined) updates.username = username.trim();
     if (profileImage !== undefined) updates.profileImage = profileImage;
     if (favoriteGenres !== undefined) updates.favoriteGenres = favoriteGenres;
     if (country !== undefined) updates.country = country;
-    if (subscription !== undefined) updates.subscription = subscription;
     if (preferredLanguage !== undefined) updates.preferredLanguage = preferredLanguage;
 
     const user = await User.findByIdAndUpdate(req.userId, updates, {

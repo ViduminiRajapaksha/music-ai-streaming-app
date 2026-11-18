@@ -16,7 +16,9 @@ import { userService } from "../services/userService";
 import { API_ORIGIN, GENRES } from "../utils/constants";
 import { formatRelativeTime } from "../utils/formatDate";
 import LoadingSpinner from "../components/LoadingSpinner";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
+import { FiUser } from "react-icons/fi";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
@@ -123,29 +125,30 @@ const Profile = () => {
   if (!user) return <LoadingSpinner />;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8 max-w-4xl">
-      <div className="flex items-center gap-6">
-        {user.profileImage ? (
-          <img
-            src={getProfileImageSrc(user.profileImage)}
-            alt={user.username}
-            className="w-24 h-24 rounded-full object-cover bg-spotify-green"
-          />
-        ) : (
-          <div className="w-24 h-24 rounded-full bg-spotify-green flex items-center justify-center text-black text-3xl font-bold">
-            {user.username?.[0]?.toUpperCase()}
-          </div>
-        )}
-        <div>
-          <h1 className="text-3xl font-bold">{user.username}</h1>
-          <p className="text-spotify-light">{user.email}</p>
-          <p className="text-spotify-light text-sm mt-1">
-            Member since {new Date(user.createdAt).toLocaleDateString()}
-          </p>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-5xl space-y-8">
+      <PageHero
+        eyebrow="Your Account"
+        title={user.username}
+        description={user.email}
+        stat={`Member since ${new Date(user.createdAt).toLocaleDateString()}`}
+        icon={FiUser}
+      >
+        <div className="flex items-center gap-4">
+          {user.profileImage ? (
+            <img
+              src={getProfileImageSrc(user.profileImage)}
+              alt={user.username}
+              className="h-20 w-20 rounded-full bg-spotify-green object-cover ring-2 ring-white/20"
+            />
+          ) : (
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-spotify-green text-3xl font-bold text-black ring-2 ring-white/20">
+              {user.username?.[0]?.toUpperCase()}
+            </div>
+          )}
         </div>
-      </div>
+      </PageHero>
 
-      <div className="glass rounded-xl p-6">
+      <div className="rounded-lg bg-white/[0.06] p-6 ring-1 ring-white/10">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold">Profile Info</h2>
           <button
@@ -197,7 +200,7 @@ const Profile = () => {
         )}
       </div>
 
-      <div className="glass rounded-xl p-6">
+      <div className="rounded-lg bg-white/[0.06] p-6 ring-1 ring-white/10">
         <h2 className="text-xl font-bold mb-4">Favorite Genres</h2>
         <div className="flex flex-wrap gap-2 mb-6">
           {GENRES.map((genre) => (
@@ -222,7 +225,7 @@ const Profile = () => {
         )}
       </div>
 
-      <div className="glass rounded-xl p-6">
+      <div className="rounded-lg bg-white/[0.06] p-6 ring-1 ring-white/10">
         <h2 className="text-xl font-bold mb-4">Listening Analytics</h2>
         {loading ? (
           <LoadingSpinner size="sm" />
@@ -245,7 +248,7 @@ const Profile = () => {
             <div className="space-y-2">
               {listeningHistory.slice(0, 10).map((item) => (
                 <div key={item._id} className="flex justify-between text-sm py-2 border-b border-white/5">
-                  <span className="truncate">{item.title} — {item.artist}</span>
+                  <span className="truncate">{item.title} - {item.artist}</span>
                   <span className="text-spotify-light flex-shrink-0 ml-4">
                     {formatRelativeTime(item.playedAt)}
                   </span>

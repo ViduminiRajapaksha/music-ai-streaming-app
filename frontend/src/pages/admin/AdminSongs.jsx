@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FiMusic, FiTrash2 } from "react-icons/fi";
 import { adminService } from "../../services/adminService";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { GENRES } from "../../utils/constants";
+import PageHero from "../../components/PageHero";
 import toast from "react-hot-toast";
 
 const AdminSongs = () => {
@@ -11,7 +12,7 @@ const AdminSongs = () => {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("");
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const data = await adminService.getSongs(status ? { status } : {});
@@ -21,11 +22,11 @@ const AdminSongs = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [status]);
 
   useEffect(() => {
     load();
-  }, [status]);
+  }, [load]);
 
   const updateSong = async (id, changes) => {
     try {
@@ -50,21 +51,24 @@ const AdminSongs = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3"><FiMusic className="text-spotify-green" /> Songs</h1>
-          <p className="text-spotify-light mt-1">Approve, edit, feature, premium-lock, or delete songs.</p>
-        </div>
-        <select value={status} onChange={(e) => setStatus(e.target.value)} className="input-field md:w-56">
-          <option value="">All statuses</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-        </select>
-      </div>
+      <PageHero
+        eyebrow="Admin Library"
+        title="Songs"
+        description="Approve, edit, feature, premium-lock, or delete songs."
+        stat={`${songs.length} songs shown`}
+        icon={FiMusic}
+        action={(
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className="input-field md:w-56">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        )}
+      />
 
       {loading ? <LoadingSpinner /> : (
-        <div className="bg-spotify-dark/50 rounded-xl overflow-x-auto">
+        <div className="overflow-x-auto rounded-lg bg-white/[0.06] ring-1 ring-white/10">
           <table className="w-full text-sm">
             <thead className="text-left text-spotify-light">
               <tr><th className="p-3">Song</th><th>Genre</th><th>Status</th><th>Premium</th><th>Featured</th><th>Actions</th></tr>
@@ -74,7 +78,7 @@ const AdminSongs = () => {
                 <tr key={song._id} className="border-t border-white/5">
                   <td className="p-3">
                     <input value={song.title} onChange={(e) => updateSong(song._id, { title: e.target.value })} className="bg-transparent border border-white/10 rounded px-2 py-1 w-full" />
-                    <p className="text-xs text-spotify-light mt-1">{song.artist} · {song.plays} plays</p>
+                    <p className="text-xs text-spotify-light mt-1">{song.artist} - {song.plays} plays</p>
                   </td>
                   <td>
                     <select value={song.genre} onChange={(e) => updateSong(song._id, { genre: e.target.value })} className="bg-transparent border border-white/10 rounded px-2 py-1">

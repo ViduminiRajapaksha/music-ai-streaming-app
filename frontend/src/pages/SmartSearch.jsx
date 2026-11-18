@@ -7,6 +7,7 @@ import AlbumCard from "../components/AlbumCard";
 import EmptyState from "../components/EmptyState";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MusicCard from "../components/MusicCard";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
 
 const EXAMPLES = [
@@ -50,14 +51,15 @@ const SmartSearch = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold flex items-center gap-3">
-          <FiSearch className="text-spotify-green" /> Smart Search
-        </h1>
-        <p className="text-spotify-light mt-1">Search naturally by mood, year, genre, activity, artist, album, or remembered lyrics.</p>
-      </div>
+      <PageHero
+        eyebrow="AI Discovery"
+        title="Smart Search"
+        description="Search naturally by mood, year, genre, activity, artist, album, or remembered lyrics."
+        stat={result ? `${songs.length} songs found` : "Try a phrase like a real listener would say it"}
+        icon={FiSearch}
+      />
 
-      <div className="glass rounded-2xl p-5 space-y-4">
+      <div className="rounded-lg bg-white/[0.06] p-5 space-y-4 ring-1 ring-white/10">
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setMode("smart")}

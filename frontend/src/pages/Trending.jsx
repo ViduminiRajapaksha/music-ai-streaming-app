@@ -7,6 +7,7 @@ import AlbumCard from "../components/AlbumCard";
 import EmptyState from "../components/EmptyState";
 import LoadingSpinner, { SkeletonGrid } from "../components/LoadingSpinner";
 import MusicCard from "../components/MusicCard";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
 
 const Trending = () => {
@@ -34,10 +35,13 @@ const Trending = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-10">
-      <div>
-        <h1 className="text-3xl font-bold">Trending</h1>
-        <p className="text-spotify-light mt-1">Most-played songs, albums, and podcasts from the local library.</p>
-      </div>
+      <PageHero
+        eyebrow="Charts"
+        title="Trending"
+        description="Most-played songs, albums, and podcasts from the local library."
+        stat={`${songs.length + albums.length + podcasts.length} trending items`}
+        icon={FiTrendingUp}
+      />
 
       {songs.length === 0 && albums.length === 0 && podcasts.length === 0 ? (
         <EmptyState icon={FiTrendingUp} title="Nothing is trending yet" description="Plays and likes will build this chart." />

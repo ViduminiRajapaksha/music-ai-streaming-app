@@ -126,14 +126,6 @@ export const MusicProvider = ({ children }) => {
     [favorites]
   );
 
-  const getFavoriteId = useCallback(
-    (trackId) => {
-      const fav = favorites.find((f) => f.youtubeId === trackId || f.id === trackId);
-      return fav?._id || fav?.id;
-    },
-    [favorites]
-  );
-
   const toggleFavorite = useCallback(
     async (track) => {
       if (!isAuthenticated) {

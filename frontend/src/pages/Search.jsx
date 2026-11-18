@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { libraryService } from "../services/libraryService";
@@ -19,7 +19,7 @@ import SearchBar from "../components/SearchBar";
 import LoadingSpinner from "../components/LoadingSpinner";
 import EmptyState from "../components/EmptyState";
 import { GENRES } from "../utils/constants";
-import { FiSearch } from "react-icons/fi";
+import { FiDisc, FiHeadphones, FiMic, FiMusic, FiRadio, FiSearch } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 const TABS = [
@@ -30,6 +30,13 @@ const TABS = [
 ];
 
 const MOODS = ["Happy", "Sad", "Energetic", "Calm", "Romantic", "Focus", "Party", "Chill"];
+const DISCOVERY_CHIPS = [
+  { label: "Sinhala", icon: FiRadio, genre: "Sinhala" },
+  { label: "Pop", icon: FiMusic, genre: "Pop" },
+  { label: "Chill", icon: FiHeadphones, mood: "Chill" },
+  { label: "Party", icon: FiDisc, mood: "Party" },
+  { label: "Focus", icon: FiMic, mood: "Focus" }
+];
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -41,7 +48,7 @@ const Search = () => {
   const [loading, setLoading] = useState(false);
   const didSearchFromParams = useRef(false);
 
-  const performSearch = async ({ q = query, selectedGenre = genre, selectedMood = mood } = {}) => {
+  const performSearch = useCallback(async ({ q = query, selectedGenre = genre, selectedMood = mood } = {}) => {
     if (!q.trim() && !selectedGenre && !selectedMood) return;
     setLoading(true);
     try {
@@ -97,7 +104,7 @@ const Search = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [genre, mood, query, setSearchParams]);
 
   useEffect(() => {
     if (didSearchFromParams.current) return;
@@ -111,7 +118,7 @@ const Search = () => {
       setMood(selectedMood);
       performSearch({ q: q || "", selectedGenre, selectedMood });
     }
-  }, []);
+  }, [performSearch, searchParams]);
 
   const handleSearch = (q) => {
     setQuery(q);
@@ -126,19 +133,56 @@ const Search = () => {
   const albums = (results?.albums || []).map(normalizeLibraryAlbum).filter(Boolean);
   const podcasts = (results?.podcasts || []).map(normalizeLibraryPodcast).filter(Boolean);
   const artists = results?.artists || [];
+  const resultCounts = {
+    songs: songs.length,
+    albums: albums.length,
+    artists: artists.length,
+    podcasts: podcasts.length
+  };
+
+  const runDiscovery = (chip) => {
+    const nextGenre = chip.genre || "";
+    const nextMood = chip.mood || "";
+    setQuery("");
+    setGenre(nextGenre);
+    setMood(nextMood);
+    setActiveTab("songs");
+    performSearch({ q: "", selectedGenre: nextGenre, selectedMood: nextMood });
+  };
 
   return (
-    <div className="space-y-6">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <h1 className="text-3xl font-bold mb-6">Search</h1>
-        <SearchBar
-          onSearch={handleSearch}
-          placeholder="Search songs, artists, albums..."
-          autoFocus
-        />
+    <div className="space-y-7">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-lg bg-gradient-to-br from-white/[0.08] to-transparent p-6 ring-1 ring-white/10">
+        <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-spotify-green">Explore</p>
+        <h1 className="mb-4 text-4xl font-black">Search your sound</h1>
+        <p className="mb-6 max-w-2xl text-spotify-light">
+          Find songs, albums, artists, and podcasts from your library and discovery results.
+        </p>
+        <div className="max-w-3xl">
+          <SearchBar
+            onSearch={handleSearch}
+            placeholder="Search songs, artists, albums..."
+            autoFocus
+          />
+        </div>
+        <div className="mt-5 flex flex-wrap gap-2">
+          {DISCOVERY_CHIPS.map((chip) => {
+            const Icon = chip.icon;
+            return (
+              <button
+                key={chip.label}
+                onClick={() => runDiscovery(chip)}
+                className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-spotify-green hover:text-black"
+              >
+                <Icon className="h-4 w-4" />
+                {chip.label}
+              </button>
+            );
+          })}
+        </div>
       </motion.div>
 
-      <div className="grid sm:grid-cols-2 gap-3">
+      <div className="grid gap-3 rounded-lg bg-white/[0.04] p-3 ring-1 ring-white/10 sm:grid-cols-2">
         <select
           value={genre}
           onChange={(e) => {
@@ -164,18 +208,19 @@ const Search = () => {
       </div>
 
       {(query || genre || mood) && (
-        <div className="flex gap-2 border-b border-white/10">
+        <div className="flex flex-wrap gap-2">
           {TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
-              className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                 activeTab === tab.id
-                  ? "border-spotify-green text-white"
-                  : "border-transparent text-spotify-light hover:text-white"
+                  ? "bg-white text-black"
+                  : "bg-white/[0.08] text-spotify-light hover:bg-white/[0.12] hover:text-white"
               }`}
             >
               {tab.label}
+              <span className="ml-2 text-xs opacity-70">{resultCounts[tab.id] || 0}</span>
             </button>
           ))}
         </div>
@@ -233,9 +278,9 @@ const Search = () => {
 
       {!query && !genre && !mood && !loading && (
         <EmptyState
-          title="Search for music"
-          description="Find songs by name, artist, album, genre, or mood"
           icon={FiSearch}
+          title="Search for music"
+          description="Try an artist name, album title, lyric fragment, genre, or one of the quick discovery chips above."
         />
       )}
     </div>

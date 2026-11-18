@@ -54,7 +54,7 @@ const Player = () => {
     if (currentTrack && isPlaying) {
       addToRecentlyPlayed(currentTrack);
     }
-  }, [currentTrack?.youtubeId, isPlaying]);
+  }, [addToRecentlyPlayed, currentTrack, isPlaying]);
 
   if (!isPlayerVisible || !currentTrack) return null;
 

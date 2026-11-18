@@ -9,6 +9,7 @@ import ArtistCard from "../components/ArtistCard";
 import EmptyState from "../components/EmptyState";
 import LoadingSpinner, { SkeletonGrid } from "../components/LoadingSpinner";
 import MusicCard from "../components/MusicCard";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
 
 const Library = () => {
@@ -37,10 +38,13 @@ const Library = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-10">
-      <div>
-        <h1 className="text-3xl font-bold">Library</h1>
-        <p className="text-spotify-light mt-1">Songs, albums, podcasts, artists, and playlists in one place.</p>
-      </div>
+      <PageHero
+        eyebrow="Your library"
+        title="Library"
+        description="Songs, albums, podcasts, artists, and playlists in one place."
+        stat={`${songs.length} songs - ${albums.length} albums - ${artists.length} artists`}
+        icon={FiMusic}
+      />
 
       {songs.length === 0 && albums.length === 0 && podcasts.length === 0 ? (
         <EmptyState icon={FiMusic} title="No library uploads yet" description="Artist uploads will appear here." />

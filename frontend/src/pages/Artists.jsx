@@ -4,6 +4,7 @@ import { FiUsers } from "react-icons/fi";
 import { libraryService } from "../services/libraryService";
 import ArtistCard from "../components/ArtistCard";
 import EmptyState from "../components/EmptyState";
+import PageHero from "../components/PageHero";
 import { SkeletonGrid } from "../components/LoadingSpinner";
 import toast from "react-hot-toast";
 
@@ -33,18 +34,21 @@ const Artists = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Artists</h1>
-          <p className="text-spotify-light mt-1">Discover creators publishing songs, albums, and podcasts.</p>
-        </div>
+      <PageHero
+        eyebrow="Discover"
+        title="Artists"
+        description="Discover creators publishing songs, albums, and podcasts."
+        stat={`${filtered.length} ${filtered.length === 1 ? "artist" : "artists"}`}
+        icon={FiUsers}
+        action={
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Filter artists"
           className="input-field md:w-72"
         />
-      </div>
+        }
+      />
 
       {loading ? (
         <SkeletonGrid count={8} />

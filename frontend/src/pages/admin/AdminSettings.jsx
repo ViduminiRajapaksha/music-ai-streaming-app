@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FiSettings } from "react-icons/fi";
 import { adminService } from "../../services/adminService";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import PageHero from "../../components/PageHero";
 import toast from "react-hot-toast";
 
 const AdminSettings = () => {
@@ -26,12 +27,15 @@ const AdminSettings = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold flex items-center gap-3"><FiSettings className="text-spotify-green" /> Admin Settings</h1>
-        <p className="text-spotify-light mt-1">System configuration used by dashboard analytics and moderation.</p>
-      </div>
+      <PageHero
+        eyebrow="Admin Console"
+        title="Admin Settings"
+        description="System configuration used by dashboard analytics and moderation."
+        stat="Read-only system snapshot"
+        icon={FiSettings}
+      />
 
-      <section className="bg-spotify-dark/50 rounded-xl p-5 space-y-4">
+      <section className="rounded-lg bg-white/[0.06] p-5 space-y-4 ring-1 ring-white/10">
         <h2 className="font-bold">Premium Management</h2>
         <label className="block">
           <span className="text-sm text-spotify-light">Monthly price estimate</span>
@@ -42,7 +46,7 @@ const AdminSettings = () => {
         </p>
       </section>
 
-      <section className="bg-spotify-dark/50 rounded-xl p-5">
+      <section className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
         <h2 className="font-bold mb-4">Moderation Defaults</h2>
         <div className="grid sm:grid-cols-3 gap-4 text-sm">
           <p className="flex justify-between bg-black/20 rounded-lg p-3"><span>Songs</span><b>{settings?.moderationDefaults?.songs}</b></p>
@@ -51,7 +55,7 @@ const AdminSettings = () => {
         </div>
       </section>
 
-      <section className="bg-spotify-dark/50 rounded-xl p-5">
+      <section className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
         <h2 className="font-bold mb-4">Analytics</h2>
         <div className="grid sm:grid-cols-2 gap-4 text-sm">
           <p className="flex justify-between bg-black/20 rounded-lg p-3"><span>Window</span><b>{settings?.analyticsWindowDays} days</b></p>

@@ -6,12 +6,9 @@ import {
   FiSearch,
   FiHeart,
   FiMusic,
-  FiTrendingUp,
   FiDisc,
   FiUsers,
-  FiGrid,
   FiBookOpen,
-  FiUploadCloud,
   FiStar,
   FiDownload,
   FiClock,
@@ -58,24 +55,6 @@ const CollapsibleSection = ({ title, icon: Icon, isOpen, onToggle, children }) =
       )}
     </AnimatePresence>
   </div>
-);
-
-const SidebarLink = ({ to, icon: Icon, label, onClick, end = false }) => (
-  <NavLink
-    to={to}
-    end={end}
-    onClick={onClick}
-    className={({ isActive }) =>
-      `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-        isActive
-          ? "bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-white"
-          : "text-gray-500 dark:text-spotify-light hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5"
-      }`
-    }
-  >
-    <Icon className="w-4 h-4" />
-    {label}
-  </NavLink>
 );
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -473,7 +452,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
       <div className="p-6 border-t border-gray-200 dark:border-white/5">
         <p className="text-gray-500 dark:text-spotify-light text-xs">
-          Powered by YouTube & Gemini AI
+          MelodyMind AI
         </p>
       </div>
     </div>

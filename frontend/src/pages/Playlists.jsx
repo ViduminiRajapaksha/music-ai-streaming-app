@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FiPlus, FiMusic } from "react-icons/fi";
+import { FiMusic, FiPlus, FiRadio } from "react-icons/fi";
 import { playlistService } from "../services/playlistService";
 import PlaylistCard from "../components/PlaylistCard";
 import Modal from "../components/Modal";
 import LoadingSpinner from "../components/LoadingSpinner";
 import EmptyState from "../components/EmptyState";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
 
 const Playlists = () => {
@@ -48,25 +49,32 @@ const Playlists = () => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">Your Playlists</h1>
-          <p className="text-spotify-light mt-1">{playlists.length} playlists</p>
-        </div>
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setModalOpen(true)}
-          className="btn-primary flex items-center gap-2"
-        >
-          <FiPlus /> Create Playlist
-        </motion.button>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
+      <PageHero
+        eyebrow="Your library"
+        title="Playlists"
+        description="Build mixes for moods, artists, late nights, workouts, and everything in between."
+        stat={`${playlists.length} ${playlists.length === 1 ? "playlist" : "playlists"}`}
+        icon={FiRadio}
+        action={
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setModalOpen(true)}
+            className="btn-primary flex w-fit items-center gap-2"
+          >
+            <FiPlus /> Create Playlist
+          </motion.button>
+        }
+      />
+
+      <div>
+        <h2 className="text-2xl font-bold">Made by you</h2>
       </div>
 
       {loading ? (
         <LoadingSpinner text="Loading playlists..." />
       ) : playlists.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {playlists.map((playlist, i) => (
             <PlaylistCard key={playlist._id} playlist={playlist} index={i} />
           ))}

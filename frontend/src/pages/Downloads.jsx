@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FiDownload, FiTrash2 } from "react-icons/fi";
 import { downloadService } from "../services/downloadService";
@@ -7,6 +7,7 @@ import { usePlayer } from "../hooks/usePlayer";
 import EmptyState from "../components/EmptyState";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MusicCard from "../components/MusicCard";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
 
 const Downloads = () => {
@@ -15,7 +16,7 @@ const Downloads = () => {
   const [loading, setLoading] = useState(true);
   const { getOfflineTracks } = usePlayer();
 
-  const load = async () => {
+  const load = useCallback(async () => {
     try {
       const data = await downloadService.getAll();
       setDownloads(data);
@@ -25,11 +26,11 @@ const Downloads = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getOfflineTracks]);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   const removeDownload = async (songId) => {
     try {
@@ -47,10 +48,13 @@ const Downloads = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-10">
-      <div>
-        <h1 className="text-3xl font-bold">Downloads</h1>
-        <p className="text-spotify-light mt-1">Premium downloads and offline listening cache.</p>
-      </div>
+      <PageHero
+        eyebrow="Offline"
+        title="Downloads"
+        description="Premium downloads and offline listening cache."
+        stat={`${tracks.length} downloaded - ${offlineTracks.length} cached`}
+        icon={FiDownload}
+      />
 
       {tracks.length ? (
         <section>

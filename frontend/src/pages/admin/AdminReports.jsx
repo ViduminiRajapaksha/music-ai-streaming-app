@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FiFileText } from "react-icons/fi";
 import { adminService } from "../../services/adminService";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import PageHero from "../../components/PageHero";
 import toast from "react-hot-toast";
 
 const AdminReports = () => {
@@ -26,27 +27,30 @@ const AdminReports = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold flex items-center gap-3"><FiFileText className="text-spotify-green" /> Reports</h1>
-        <p className="text-spotify-light mt-1">Revenue, subscriptions, downloads, and listening activity reports.</p>
-      </div>
+      <PageHero
+        eyebrow="Admin Reports"
+        title="Reports"
+        description="Revenue, subscriptions, downloads, and listening activity reports."
+        stat={`${data?.downloads?.length || 0} recent downloads`}
+        icon={FiFileText}
+      />
 
       <div className="grid sm:grid-cols-3 gap-4">
-        <div className="bg-spotify-dark/50 rounded-xl p-5">
+        <div className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
           <p className="text-sm text-spotify-light">Premium Users</p>
           <p className="text-3xl font-bold mt-2">{data?.revenue?.premiumUsers || 0}</p>
         </div>
-        <div className="bg-spotify-dark/50 rounded-xl p-5">
+        <div className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
           <p className="text-sm text-spotify-light">MRR</p>
           <p className="text-3xl font-bold mt-2">${data?.revenue?.monthlyRecurringRevenue || 0}</p>
         </div>
-        <div className="bg-spotify-dark/50 rounded-xl p-5">
+        <div className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
           <p className="text-sm text-spotify-light">Annual Run Rate</p>
           <p className="text-3xl font-bold mt-2">${data?.revenue?.annualRunRate || 0}</p>
         </div>
       </div>
 
-      <section className="bg-spotify-dark/50 rounded-xl p-5 overflow-x-auto">
+      <section className="overflow-x-auto rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
         <h2 className="font-bold mb-4">Recent Downloads</h2>
         <table className="w-full text-sm">
           <thead className="text-spotify-light text-left">
@@ -64,7 +68,7 @@ const AdminReports = () => {
         </table>
       </section>
 
-      <section className="bg-spotify-dark/50 rounded-xl p-5 overflow-x-auto">
+      <section className="overflow-x-auto rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
         <h2 className="font-bold mb-4">Listening Activity</h2>
         <table className="w-full text-sm">
           <thead className="text-spotify-light text-left">

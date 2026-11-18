@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { FiFileText, FiMic } from "react-icons/fi";
 import { usePlayer } from "../hooks/usePlayer";
 import EmptyState from "../components/EmptyState";
+import PageHero from "../components/PageHero";
 
 const Lyrics = () => {
   const {
@@ -22,18 +23,21 @@ const Lyrics = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl mx-auto space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Lyrics</h1>
-          <p className="text-spotify-light mt-1">{currentTrack.title} - {currentTrack.artist}</p>
-        </div>
-        <button
+      <PageHero
+        eyebrow="Now playing"
+        title="Lyrics"
+        description={`${currentTrack.title} - ${currentTrack.artist}`}
+        stat={`${lyricsLines.length} lines`}
+        icon={FiFileText}
+        action={
+          <button
           onClick={() => setKaraokeMode(!karaokeMode)}
           className={`btn-secondary flex items-center gap-2 ${karaokeMode ? "text-spotify-green" : ""}`}
         >
           <FiMic /> Karaoke Mode
         </button>
-      </div>
+        }
+      />
 
       <div className={`rounded-2xl p-6 ${karaokeMode ? "bg-black" : "glass"}`}>
         <div className="space-y-3 text-center">

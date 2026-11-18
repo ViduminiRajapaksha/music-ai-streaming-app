@@ -4,6 +4,7 @@ import { usePlayer } from "../hooks/usePlayer";
 import { PLACEHOLDER_IMAGE } from "../utils/constants";
 import { formatDuration } from "../utils/formatDuration";
 import EmptyState from "../components/EmptyState";
+import PageHero from "../components/PageHero";
 
 const Queue = () => {
   const {
@@ -21,10 +22,13 @@ const Queue = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Queue</h1>
-        <p className="text-spotify-light mt-1">{queue.length} tracks queued</p>
-      </div>
+      <PageHero
+        eyebrow="Now playing"
+        title="Queue"
+        description="Control what plays next and reorder your listening session."
+        stat={`${queue.length} tracks queued`}
+        icon={FiList}
+      />
 
       {currentTrack && (
         <div className="glass rounded-xl p-4">

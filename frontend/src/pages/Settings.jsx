@@ -2,7 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../hooks/useAuth";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
+import { FiLock, FiSettings } from "react-icons/fi";
 
 const Settings = () => {
   const { changePassword, deleteAccount } = useAuth();
@@ -47,11 +49,19 @@ const Settings = () => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-lg space-y-8">
-      <h1 className="text-3xl font-bold">Settings</h1>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl space-y-8">
+      <PageHero
+        eyebrow="Account Controls"
+        title="Settings"
+        description="Manage sign-in security and account actions."
+        stat="Keep your MelodyMind account current"
+        icon={FiSettings}
+      />
 
-      <div className="glass rounded-xl p-6">
-        <h2 className="text-xl font-bold mb-4">Change Password</h2>
+      <div className="rounded-lg bg-white/[0.06] p-6 ring-1 ring-white/10">
+        <h2 className="mb-4 flex items-center gap-2 text-xl font-bold">
+          <FiLock className="text-spotify-green" /> Change Password
+        </h2>
         <form onSubmit={handlePasswordChange} className="space-y-4">
           <input
             type="password"
@@ -84,7 +94,7 @@ const Settings = () => {
         </form>
       </div>
 
-      <div className="glass rounded-xl p-6 border border-red-500/20">
+      <div className="rounded-lg border border-red-500/20 bg-red-500/[0.04] p-6">
         <h2 className="text-xl font-bold mb-2 text-red-400">Danger Zone</h2>
         <p className="text-spotify-light text-sm mb-4">
           Permanently delete your account and all associated data.

@@ -4,16 +4,20 @@ import { useMusic } from "../hooks/useMusic";
 import FavoriteCard from "../components/FavoriteCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import EmptyState from "../components/EmptyState";
+import PageHero from "../components/PageHero";
 
 const Favorites = () => {
   const { favorites, favoritesLoading } = useMusic();
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <h1 className="text-3xl font-bold mb-2">Your Favorites</h1>
-      <p className="text-spotify-light mb-8">
-        {favorites.length} {favorites.length === 1 ? "song" : "songs"} saved
-      </p>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
+      <PageHero
+        eyebrow="Your library"
+        title="Favorites"
+        description="Your saved songs in one place, ready whenever you want to replay them."
+        stat={`${favorites.length} ${favorites.length === 1 ? "song" : "songs"} saved`}
+        icon={FiHeart}
+      />
 
       {favoritesLoading ? (
         <LoadingSpinner text="Loading favorites..." />

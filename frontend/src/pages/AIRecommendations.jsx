@@ -6,6 +6,7 @@ import { normalizeLibrarySong } from "../utils/normalize";
 import RecommendationCard from "../components/RecommendationCard";
 import EmptyState from "../components/EmptyState";
 import LoadingSpinner from "../components/LoadingSpinner";
+import PageHero from "../components/PageHero";
 import toast from "react-hot-toast";
 
 const sourceMeta = {
@@ -49,7 +50,7 @@ const AIRecommendations = () => {
       await loadRecommendations();
       toast.success("Recommendations refreshed");
     } catch (err) {
-      toast.error(err.message || "Could not refresh recommendations. Check Gemini/YouTube API availability.");
+      toast.error(err.message || "Could not refresh recommendations. Check AI recommendation services.");
     } finally {
       setRefreshing(false);
     }
@@ -66,27 +67,26 @@ const AIRecommendations = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <FiStar className="text-spotify-green" /> AI Recommendations
-          </h1>
-          <p className="text-spotify-light mt-1">
-            Personalized from listening history, favorite genres, time, device, and activity signals.
-          </p>
-        </div>
-        <button
-          onClick={refreshAI}
-          disabled={refreshing}
-          className="btn-primary flex items-center justify-center gap-2"
-        >
-          <FiRefreshCw className={refreshing ? "animate-spin" : ""} />
-          {refreshing ? "Learning..." : "Refresh AI Picks"}
-        </button>
-      </div>
+      <PageHero
+        eyebrow="For You"
+        title="AI Recommendations"
+        description="Personalized picks from listening history, favorite genres, time, device, and activity signals."
+        stat={`${tracks.length} tracks ready`}
+        icon={FiStar}
+        action={(
+          <button
+            onClick={refreshAI}
+            disabled={refreshing}
+            className="btn-primary flex items-center justify-center gap-2"
+          >
+            <FiRefreshCw className={refreshing ? "animate-spin" : ""} />
+            {refreshing ? "Learning..." : "Refresh AI Picks"}
+          </button>
+        )}
+      />
 
       {analysis && (
-        <div className="glass rounded-xl p-5">
+        <div className="rounded-lg bg-white/[0.06] p-5 ring-1 ring-white/10">
           <h2 className="font-bold mb-2">Assistant Notes</h2>
           <p className="text-spotify-light">{analysis.summary || analysis.explanation}</p>
           <div className="flex flex-wrap gap-2 mt-3">
